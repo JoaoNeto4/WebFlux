@@ -1,0 +1,8 @@
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://${DB_USER:admin}:${DB_PASSWORD:admin}@webfluxclustercourse.ebpfcm7.mongodb.net/${DB_NAME:webflux-course}?retryWrites=true&w=majority&appName=WebFluxClusterCourse
+      auto-index-creation: true
+  application:
+    name: webFlux-course
