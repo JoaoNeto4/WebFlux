@@ -8,8 +8,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
-import org.springframework.web.client.HttpClientErrorException.BadRequest;
 
+import br.com.webflux.javaWebFlux.service.exception.ObjectNotFoundException;
 import reactor.core.publisher.Mono;
 
 import static java.time.LocalDateTime.now;
@@ -53,6 +53,22 @@ public class ControllerExceptionHandler {
 			error.addError(x.getField(), x.getDefaultMessage());
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Mono.just(error));
+	}
+	
+	@ExceptionHandler(ObjectNotFoundException.class)
+	ResponseEntity<Mono<StandardError>> objectNotFoundException(
+			DuplicateKeyException ex, ServerHttpRequest request
+	){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(Mono.just(
+						StandardError.builder()
+							.timestamp(now())
+							.status(HttpStatus.NOT_FOUND.value())
+							.error(HttpStatus.NOT_FOUND.getReasonPhrase())
+							.message(ex.getMessage())
+							.path(request.getPath().toString())
+							.build()
+				));
 	}
 	
 	private String verifyDupKey(String message) {
